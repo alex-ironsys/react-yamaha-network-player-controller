@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import MainPanel from './MainPanel.js';
+import Sidebar from './Sidebar.js';
+import Titlebar from './Titlebar.js';
 
 class Device extends Component {
     render() {
         return (
-            <div className="device">
-                <div>
-                    <h3 className="primary-color">Sidebar</h3>
-                </div>
-                <div>
-                    <h3 className="primary-color">Main window</h3>
-                </div>
+            <div className="layout">
+                <Titlebar />
+                <Sidebar />
+                <MainPanel />
             </div>
         )
     }

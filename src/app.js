@@ -5,12 +5,12 @@ import './styles/styles.scss';
 
 class App extends Component {
     render() {
-      return (
-        <div className="App">
-          <Device />
-        </div>
-      )
+        return (
+            <div className="App">
+              <Device />
+            </div>
+        )
     }
-  }
+}
 
 ReactDOM.render(<App />, document.getElementById('root'))
