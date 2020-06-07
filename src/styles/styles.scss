@@ -1,0 +1,24 @@
+$primary-color: #0088cC;
+
+body {
+  font-family: sans-serif;
+  font-size: medium;
+  background-color: #000000;
+  color: #FFFFFF;
+  padding: 1em;
+}
+
+.primary-color {
+  color: $primary-color;
+}
+
+.device {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-gap: 1em;
+}
+
+.device > div {
+  background-color: #222222;
+  padding: 1em;
+}
