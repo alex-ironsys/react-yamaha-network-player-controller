@@ -24,5 +24,23 @@ body {
 
 .layout > div {
   background-color: #222222;
-  padding: 0.5em 1em;
+  padding: 1em 1em;
+}
+
+button {
+  background-color: #111111;
+  border: 0;
+  border-bottom: 2px solid #888888;
+  color: #888888;
+  cursor: pointer;
+  outline:none;
+  padding: 1em;
+}
+
+button.active {
+  border-bottom-color: #00FF00;
+}
+
+button:hover {
+  color: #BBBBBB;
 }

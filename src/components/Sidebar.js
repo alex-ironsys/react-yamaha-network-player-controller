@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import PowerButton from './PowerButton.js';
 
 class Sidebar extends Component {
     render() {
         return (
             <div>
-                <h3 className="primary-color">Sidebar</h3>
-                <p>Some stuff comes here later...</p>
+                <PowerButton powerOn={this.props.powerOn} onClick={this.props.onPowerOnChange} />
             </div>
         )
     }
