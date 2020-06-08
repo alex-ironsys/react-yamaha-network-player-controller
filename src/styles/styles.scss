@@ -35,6 +35,7 @@ button {
   cursor: pointer;
   outline:none;
   padding: 1em;
+  margin: 3px;
 }
 
 button.active {
@@ -43,4 +44,13 @@ button.active {
 
 button:hover {
   color: #BBBBBB;
+}
+
+div.display {
+  background-color: #111111;
+  color: $primary-color;
+  font-family: monospace;
+  font-size: medium;
+  margin: 1em;
+  padding: 1em;
 }
