@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import BalanceControl from './BalanceControl.js';
 import PowerButton from './PowerButton.js';
 import VolumeControl from './VolumeControl.js';
 
@@ -10,6 +11,10 @@ class Sidebar extends Component {
                 <VolumeControl 
                     onClickVolumeUp={this.props.onVolumeUp}  
                     onClickVolumeDown={this.props.onVolumeDown}
+                />
+                <BalanceControl 
+                    onClickBalanceUp={this.props.onBalanceUp}  
+                    onClickBalanceDown={this.props.onBalanceDown}
                 />
             </div>
         )
