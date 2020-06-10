@@ -7,11 +7,6 @@ import Titlebar from './Titlebar.js';
 class Device extends Component {
     constructor(props) {
         super(props);
-        this.handleBalanceDown = this.handleBalanceDown.bind(this);
-        this.handleBalanceUp = this.handleBalanceUp.bind(this);
-        this.handlePowerOnChange = this.handlePowerOnChange.bind(this);
-        this.handleVolumeDown = this.handleVolumeDown.bind(this);
-        this.handleVolumeUp = this.handleVolumeUp.bind(this);
         this.state = {
             powerOn: false, 
             inputSource: null,
@@ -19,6 +14,12 @@ class Device extends Component {
             balance: 0,
             host: 'http://localhost:8010/proxy'
         };
+        this.handleBalanceDown = this.handleBalanceDown.bind(this);
+        this.handleBalanceUp = this.handleBalanceUp.bind(this);
+        this.handleSetInputSource = this.handleSetInputSource.bind(this);
+        this.handlePowerOnChange = this.handlePowerOnChange.bind(this);
+        this.handleVolumeDown = this.handleVolumeDown.bind(this);
+        this.handleVolumeUp = this.handleVolumeUp.bind(this);
     }
 
     componentDidMount() {
@@ -33,6 +34,7 @@ class Device extends Component {
             'setVolume': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="PUT"><System><Volume><Lvl>___VOLUME___</Lvl></Volume></System></YAMAHA_AV>',
             'getBalance': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="GET"><System><Sound><Balance>GetParam</Balance></Sound></System></YAMAHA_AV>',
             'setBalance': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="PUT"><System><Sound><Balance>___BALANCE___</Balance></Sound></System></YAMAHA_AV>',
+            'setInputSel': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="PUT"><System><Input><Input_Sel>___INPUT_SEL___</Input_Sel></Input></System></YAMAHA_AV>',
         }
 
         return commands[commandLabel];
@@ -136,6 +138,24 @@ class Device extends Component {
         });
     }
 
+    commandSetInputSource(inputSource) {
+        const host = this.state.host;
+        const url = host + '/YamahaRemoteControl/ctrl';
+        const xml = this.commands('setInputSel').replace('___INPUT_SEL___', inputSource);
+
+        axios({
+            method: 'post',
+            headers: { 'Content-Type': 'text/xml; charset=UTF-8' },
+            url: url,
+            data: xml
+        }).then(function (response) {
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+
     handlePowerOnChange(powerOn) {
         this.setState({powerOn: powerOn});
         if (!powerOn) {
@@ -187,8 +207,14 @@ class Device extends Component {
         this.commandSetBalance(balance);
     }
 
+    handleSetInputSource(inputSource) {
+        this.setState({inputSource: inputSource});
+        this.commandSetInputSource(inputSource);
+    }
+
     render() {
         const balance = this.state.balance;
+        const inputSource = this.state.inputSource;
         const powerOn = this.state.powerOn;
         const volume = this.state.volume;
 
@@ -203,7 +229,13 @@ class Device extends Component {
                     onVolumeUp={this.handleVolumeUp}
                     onPowerOnChange={this.handlePowerOnChange}
                 />
-                <MainPanel balance={balance} powerOn={powerOn} volume={volume} />
+                <MainPanel 
+                    balance={balance}
+                    inputSource={inputSource}
+                    powerOn={powerOn}
+                    volume={volume} 
+                    onInputSourceChange={this.handleSetInputSource}
+                />
             </div>
         )
     }
