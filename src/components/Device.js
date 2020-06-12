@@ -8,7 +8,10 @@ class Device extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            album: null,
+            artist: null,
             powerOn: false, 
+            song: null,
             inputSource: null,
             volume: 0,
             balance: 0,
@@ -24,6 +27,7 @@ class Device extends Component {
 
     componentDidMount() {
         this.commandGetBasicStatus();
+        this.commandGetPlayerInfo();
         this.commandGetBalance();
     }
 
@@ -31,6 +35,7 @@ class Device extends Component {
         const commands = {
             'powerOff': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="PUT"><System><Power_Control><Power>Standby</Power></Power_Control></System></YAMAHA_AV>',
             'getBasicStatus': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="GET"><System><Basic_Status>GetParam</Basic_Status></System></YAMAHA_AV>',
+            'getPlayerInfo': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="GET"><Player><Play_Info>GetParam</Play_Info></Player></YAMAHA_AV>',
             'setVolume': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="PUT"><System><Volume><Lvl>___VOLUME___</Lvl></Volume></System></YAMAHA_AV>',
             'getBalance': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="GET"><System><Sound><Balance>GetParam</Balance></Sound></System></YAMAHA_AV>',
             'setBalance': '<?xml version="1.0" encoding="utf-8" ?><YAMAHA_AV cmd="PUT"><System><Sound><Balance>___BALANCE___</Balance></Sound></System></YAMAHA_AV>',
@@ -54,6 +59,42 @@ class Device extends Component {
             console.log(response);
         })
         .catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    commandGetPlayerInfo() {
+        const host = this.state.host;
+        const url = host + '/YamahaRemoteControl/ctrl';
+        const xml = this.commands('getPlayerInfo');
+
+        axios({
+            method: 'post',
+            headers: { 'Content-Type': 'text/xml; charset=UTF-8' },
+            url: url,
+            data: xml
+        }).then((response) => {
+            const parser = new DOMParser();
+            const responseXml = parser.parseFromString(response.data, "text/xml");
+            let album = null;
+            let artist = null;
+            let song = null;
+
+            if (responseXml.getElementsByTagName("Album")[0].childNodes[0]) {
+                album = responseXml.getElementsByTagName("Album")[0].childNodes[0].nodeValue;
+            }
+            
+            if (responseXml.getElementsByTagName("Artist")[0].childNodes[0]) {
+                artist = responseXml.getElementsByTagName("Artist")[0].childNodes[0].nodeValue;
+            }
+
+            if (responseXml.getElementsByTagName("Song")[0].childNodes[0]) {
+                song = responseXml.getElementsByTagName("Song")[0].childNodes[0].nodeValue;
+            }
+            
+            this.setState({album: album, artist: artist, song: song});
+        })
+        .catch((error) => {
             console.log(error);
         });
     }
@@ -213,9 +254,12 @@ class Device extends Component {
     }
 
     render() {
+        const album = this.state.album;
+        const artist = this.state.artist;
         const balance = this.state.balance;
         const inputSource = this.state.inputSource;
         const powerOn = this.state.powerOn;
+        const song = this.state.song;
         const volume = this.state.volume;
 
         return (
@@ -230,9 +274,12 @@ class Device extends Component {
                     onPowerOnChange={this.handlePowerOnChange}
                 />
                 <MainPanel 
+                    album={album}
+                    artist={artist}
                     balance={balance}
                     inputSource={inputSource}
                     powerOn={powerOn}
+                    song={song}
                     volume={volume} 
                     onInputSourceChange={this.handleSetInputSource}
                 />
